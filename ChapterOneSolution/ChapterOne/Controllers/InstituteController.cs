@@ -19,7 +19,64 @@ namespace ChapterOne.Controllers
         };
         public IActionResult Index()
         {
-            return View(institutions);
+            var result = institutions.OrderBy(i => i.Name);
+            return View(result);
+        }
+
+        // GET : Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Institute institute)
+        {
+            institutions.Add(institute);
+            institute.InstituteId = institutions.Select(i => i.InstituteId).Max() + 1;
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Edit(long id)
+        {
+            var result = institutions.Where(i => i.InstituteId == id).FirstOrDefault();
+            return View(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Institute institute)
+        {
+            institutions.Remove(institutions
+                .Where(i => i.InstituteId == institute.InstituteId)
+                .First());
+            institutions.Add(institute);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Details(long id)
+        {
+            var result = institutions.Where(i => i.InstituteId == id).First();
+            return View(result);
+        }
+
+        public IActionResult Delete(long id)
+        {
+            var result = institutions.Where(i => i.InstituteId == id).First();
+            return View(result);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(Institute institute)
+        {
+            institutions
+                .Remove(institutions
+                .Where(i => i.InstituteId == institute.InstituteId)
+                .First());
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
